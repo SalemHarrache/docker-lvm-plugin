@@ -142,7 +142,7 @@ func (l *lvmDriver) Create(req volume.Request) volume.Response {
 			device = luksDevice(req.Name)
 		}
 
-		cmd = exec.Command("mkfs.xfs", device)
+		cmd = exec.Command("mkfs.xfs", "-f", device)
 		if out, err := cmd.CombinedOutput(); err != nil {
 			l.logger.Err(fmt.Sprintf("Create: mkfs.xfs error: %s output %s", err, string(out)))
 			return resp(fmt.Errorf("Error partitioning volume"))

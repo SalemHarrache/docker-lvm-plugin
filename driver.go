@@ -308,7 +308,7 @@ func (l *lvmDriver) Mount(req *volume.MountRequest) (*volume.MountResponse, erro
 
 		mountArgs := []string{device, getMountpoint(l.home, req.Name)}
 		if isSnap {
-			mountArgs = append([]string{"-o", "nouuid"}, mountArgs...)
+			mountArgs = append([]string{"-o", "rw,nobarrier,nodiratime,noatime,,nouuid,attr2,inode64,sunit=512,swidth=2048,noquota"}, mountArgs...)
 		}
 		cmd := exec.Command("mount", mountArgs...)
 		if out, err := cmd.CombinedOutput(); err != nil {

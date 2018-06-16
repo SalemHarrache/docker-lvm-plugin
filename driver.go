@@ -142,9 +142,9 @@ func (l *lvmDriver) Create(req *volume.CreateRequest) error {
 			device = luksDevice(req.Name)
 		}
 
-		cmd = exec.Command("mkfs.xfs", device)
+		cmd = exec.Command("mkfs.ext4", "-F", device)
 		if out, err := cmd.CombinedOutput(); err != nil {
-			l.logger.Err(fmt.Sprintf("Create: mkfs.xfs error: %s output %s", err, string(out)))
+			l.logger.Err(fmt.Sprintf("Create: mkfs.ext4 error: %s output %s", err, string(out)))
 			return fmt.Errorf("Error partitioning volume")
 		}
 
@@ -307,9 +307,7 @@ func (l *lvmDriver) Mount(req *volume.MountRequest) (*volume.MountResponse, erro
 		}
 
 		mountArgs := []string{device, getMountpoint(l.home, req.Name)}
-		if isSnap {
-			mountArgs = append([]string{"-o", "nouuid"}, mountArgs...)
-		}
+		mountArgs = append([]string{"-o", "errors=remount-ro,noatime,data=writeback,barrier=0,nobh,dioread_nolock"}, mountArgs...)
 		cmd := exec.Command("mount", mountArgs...)
 		if out, err := cmd.CombinedOutput(); err != nil {
 			l.logger.Err(fmt.Sprintf("Mount: mount error: %s output %s", err, string(out)))
